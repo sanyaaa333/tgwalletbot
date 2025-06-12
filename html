@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WalletStars | Купить Звёзды</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #181A1B;
+      color: #fff;
+      min-height: 100vh;
+      padding-bottom: 70px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 16px 10px 16px;
+      background: #181A1B;
+      z-index: 10;
+      position: sticky;
+      top: 0;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .tab-panel {
+      display: none;
+      width: 100%;
+      animation: fadein .2s;
+    }
+    .tab-panel.active { display: block; }
+    @keyframes fadein {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    /* Кошелек */
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+    .profile-pic {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #232629;
+    }
+    .profile-id {
+      background: #232629;
+      color: #ccc;
+      font-size: 12px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-top: 6px;
+    }
+    .profile-name {
+      font-size: 23px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .actions-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 16px 0;
+    }
+    .action-btn {
+      flex: 1;
+      background: #1687fa;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 0;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .action-btn:hover {background: #0f6bcc;}
+    .wallet-list {
+      margin: 0 10px;
+    }
+    .wallet-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 12px;
+      border-radius: 9px;
+      background: #232629;
+      margin-top: 10px;
+    }
+    .wallet-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #ffa800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .wallet-title.ton { color: #0ff7e1; }
+    .wallet-title.usdt { color: #41f7bb; }
+    .wallet-balance {
+      text-align: right;
+    }
+    .wallet-amount {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .wallet-amount-usd {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .transactions-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 18px 0 6px 0;
+      color: #1687fa;
+      text-decoration: none;
+      font-size: 16px;
+      gap: 7px;
+    }
+    .ad-banner {
+      display: flex;
+      align-items: center;
+      background: #1d112b;
+      border-radius: 12px;
+      margin: 18px 12px;
+      padding: 16px;
+      color: #fff;
+      font-size: 15px;
+      justify-content: space-between;
+    }
+    .ad-banner-view {
+      color: #54aaff;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Маркет */
+    .market-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+    .market-desc {
+      text-align: center;
+      font-size: 15px;
+      color: #bdbdbd;
+      margin-bottom: 18px;
+    }
+    .market-cards {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .market-card {
+      background: #232629;
+      border-radius: 12px;
+      width: 165px;
+      max-width: 95vw;
+      text-align: center;
+      padding: 18px 8px 16px 8px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .market-card img {
+      width: 75px;
+      height: 75px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      object-fit: contain;
+      background: #16191a;
+    }
+    .market-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+    .market-card-btn {
+      margin-top: 7px;
+      background: #1687fa;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 0;
+      width: 94px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .market-card-btn:hover { background: #0f6bcc; }
+
+    /* Чеки */
+    .checks-placeholder {
+      margin-top: 60px;
+      text-align: center;
+      color: #888;
+      font-size: 17px;
+    }
+
+    /* Партнерство */
+    .partner-section {
+      display: flex;
+      gap: 10px;
+      margin: 22px 10px 16px 10px;
+    }
+    .partner-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 14px;
+      background: #232629;
+      object-fit: cover;
+      display: block;
+    }
+    .partner-percent {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1687fa;
+      border-radius: 14px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .partner-link-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: #232629;
+      border-radius: 8px;
+      margin: 0 10px 8px 10px;
+      padding: 10px;
+      user-select: all;
+    }
+    .partner-link {
+      flex: 1;
+      color: #fff;
+      font-size: 14px;
+      word-break: break-all;
+    }
+    .partner-copy {
+      cursor: pointer;
+      color: #1687fa;
+      font-size: 19px;
+      padding: 2px;
+      border-radius: 5px;
+      transition: background .15s;
+    }
+    .partner-copy:hover { background: #21283d; }
+    .partner-stats {
+      display: flex;
+      gap: 10px;
+      margin: 14px 10px 10px 10px;
+    }
+    .partner-stat-box {
+      background: #232629;
+      border-radius: 10px;
+      flex: 1;
+      text-align: center;
+      padding: 13px 0 7px 0;
+    }
+    .partner-stat-num {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .partner-stat-label {
+      font-size: 13px;
+      color: #bbb;
+    }
+    .partner-invite-btn {
+      margin: 20px 10px 0 10px;
+      width: calc(100% - 20px);
+      padding: 15px 0;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      background: #1687fa;
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .partner-invite-btn:hover { background: #0f6bcc; }
+
+    /* Tabs */
+    .tabs {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: #222426;
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 0 2px 0;
+      border-top: 1px solid #232629;
+      z-index: 12;
+    }
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 12px;
+      color: #888;
+      border: none;
+      background: none;
+      padding: 5px 0 2px 0;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .tab-btn.active { color: #1687fa; }
+    .tab-icon {
+      font-size: 22px;
+      margin-bottom: 2px;
+    }
+    /* Modal styles */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: rgba(24,26,27,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg.active { display: flex; }
+    .modal {
+      background: #232629;
+      border-radius: 16px;
+      padding: 28px 18px 22px 18px;
+      max-width: 92vw;
+      width: 340px;
+      box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 6px 40px 0 rgba(0,0,0,0.45);
+      color: #fff;
+      animation: fadein .18s;
+    }
+    .modal-close {
+      position: absolute;
+      right: 13px; top: 13px;
+      color: #888;
+      background: none;
+      border: none;
+      font-size: 25px;
+      cursor: pointer;
+      z-index: 110;
+    }
+    .modal-title {
+      font-size: 21px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .modal-desc {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .modal-label {
+      font-size: 15px;
+      margin-bottom: 7px;
+      margin-top: 12px;
+    }
+    .modal-inputbox {
+      width: 100%;
+      padding: 0 0 0 0;
+      margin-bottom: 10px;
+    }
+    .modal-input {
+      width: 100%;
+      border-radius: 7px;
+      border: 1px solid #323537;
+      background: #181A1B;
+      color: #fff;
+      font-size: 17px;
+      padding: 13px 12px;
+      box-sizing: border-box;
+      margin-bottom: 2px;
+      outline: none;
+      transition: border .2s;
+    }
+    .modal-input:focus { border: 1.5px solid #1687fa;}
+    .modal-pay-btn {
+      margin-top: 18px;
+      width: 100%;
+      background: #1687fa;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 0;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .modal-pay-btn:hover { background: #0f6bcc; }
+    .modal-ton-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 2px;
+    }
+    .modal-ton-icon {
+      font-size: 19px;
+      color: #0ff7e1;
+    }
+    .modal-hint {
+      font-size: 13px;
+      color: #888;
+      margin-top: 6px;
+      text-align: center;
+    }
+    @media (max-width: 480px) {
+      .header { font-size: 14px; }
+      .profile-pic { width: 62px; height: 62px; }
+      .wallet-item { padding: 12px 8px; }
+      .actions-row { gap: 7px; }
+      .action-btn { font-size: 16px; }
+      .market-card { width: 96vw; min-width: 140px; }
+      .partner-section { flex-direction: column; align-items: center; }
+      .partner-img, .partner-percent { width: 100%; }
+      .modal { width: 97vw; padding: 22px 7vw 18px 7vw;}
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">WalletStars | Купить Звёзды</div>
+    <div class="header-actions">
+      <span class="material-icons" style="font-size:22px; color:#aaa;">more_vert</span>
+      <span class="material-icons" style="font-size:22px; color:#aaa;">close</span>
+    </div>
+  </div>
+
+  <!-- Вкладка 1: Кошелек -->
+  <div class="tab-panel active" id="tab-wallet">
+    <div class="profile">
+      <img class="profile-pic" src="https://randomuser.me/api/portraits/men/35.jpg" alt="avatar">
+      <div class="profile-id">#216167</div>
+      <div class="profile-name">Xalin</div>
+    </div>
+    <div class="actions-row">
+      <button class="action-btn">&#8592; Вывести</button>
+      <button class="action-btn" id="topup-ton-btn">&#8595; Пополнить</button>
+    </div>
+    <div class="wallet-list">
+      <div class="wallet-item">
+        <div class="wallet-title"><span class="material-icons" style="color:#ffa800;">star</span> STARS</div>
+        <div class="wallet-balance">
+          <div class="wallet-amount">0</div>
+          <div class="wallet-amount-usd">0.00$</div>
+        </div>
+      </div>
+      <div class="wallet-item">
+        <div class="wallet-title ton"><span class="material-icons" style="color:#0ff7e1;">token</span> TON</div>
+        <div class="wallet-balance">
+          <div class="wallet-amount">0.00</div>
+          <div class="wallet-amount-usd">0.00$</div>
+        </div>
+      </div>
+      <div class="wallet-item">
+        <div class="wallet-title usdt"><span class="material-icons" style="color:#41f7bb;">attach_money</span> USDT</div>
+        <div class="wallet-balance">
+          <div class="wallet-amount">0.00</div>
+          <div class="wallet-amount-usd">0$</div>
+        </div>
+      </div>
+    </div>
+    <a class="transactions-link" href="#"><span class="material-icons" style="font-size:18px;">history</span> История транзакций</a>
+    <div class="ad-banner">
+      <div>
+        <div style="font-weight:500;">Купить звёзды</div>
+        <div style="font-size:13px;color:#aaa;">Покупай телеграм звезды выгодно</div>
+      </div>
+      <div class="ad-banner-view">View</div>
+    </div>
+  </div>
+
+  <!-- Вкладка 2: Маркет -->
+  <div class="tab-panel" id="tab-market">
+    <div class="market-title">Маркет WalletStars</div>
+    <div class="market-desc">Покупай и продавай звёзды. Дари Premium своим друзьям и не только.</div>
+    <div class="market-cards">
+      <div class="market-card">
+        <img src="buy.png" alt="buy-stars" />
+        <div class="market-card-title" style="color:#0ff53b;">Купить звёзды</div>
+        <button class="market-card-btn">Купить</button>
+      </div>
+      <div class="market-card">
+        <img src="sell.png" alt="sell-stars"/>
+        <div class="market-card-title" style="color:#ff4055;">Продать звёзды</div>
+        <button class="market-card-btn">Продать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Вкладка 3: Партнерство -->
+  <div class="tab-panel" id="tab-partnership">
+    <div class="partner-section">
+      <img class="partner-img" src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="duck" />
+      <div class="partner-percent">
+        <div>
+          50%<br><span style="font-size:15px;font-weight:400;">Твой процент</span>
+        </div>
+      </div>
+    </div>
+    <div class="partner-link-row">
+      <span class="partner-link" id="ref-link">https://t.me/WalletStarsBot?startapp=724449944</span>
+      <span class="material-icons partner-copy" onclick="copyRefLink()">content_copy</span>
+    </div>
+    <div class="partner-stats">
+      <div class="partner-stat-box">
+        <div class="partner-stat-num">0</div>
+        <div class="partner-stat-label">Приглашено</div>
+      </div>
+      <div class="partner-stat-box">
+        <div class="partner-stat-num">0.00 TON</div>
+        <div class="partner-stat-label">Заработок</div>
+      </div>
+    </div>
+    <button class="partner-invite-btn">Пригласить</button>
+  </div>
+
+  <!-- МОДАЛКА ПОПОЛНЕНИЯ -->
+  <div class="modal-bg" id="ton-modal-bg" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+      <div class="modal-title">Пополнение через TON</div>
+      <div class="modal-desc">Введите сумму в TON для пополнения баланса.<br>Дальше вы перейдёте в TON-кошелёк для оплаты.</div>
+      <div class="modal-label">Сумма пополнения</div>
+      <div class="modal-inputbox">
+        <div class="modal-ton-row">
+          <input type="number" step="0.01" min="0.01" id="tonAmount" class="modal-input" placeholder="Например, 10" />
+          <span class="material-icons modal-ton-icon">token</span>
+        </div>
+      </div>
+      <button class="modal-pay-btn" onclick="payTon()">
+        <span class="material-icons">arrow_forward</span>
+        Перейти к оплате
+      </button>
+      <div class="modal-hint">
+        Минимальная сумма: 0.01 TON.<br>
+        Оплата происходит через Tonkeeper/TON Space.
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижнее меню -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="wallet">
+      <span class="material-icons tab-icon">account_balance_wallet</span>
+      Кошелёк
+    </button>
+    <button class="tab-btn" data-tab="market">
+      <span class="material-icons tab-icon">storefront</span>
+      Маркет
+    </button>
+    <button class="tab-btn" data-tab="partnership">
+      <span class="material-icons tab-icon">diversity_3</span>
+      Партнёрство
+    </button>
+  </nav>
+<script src="script.js"></script>
+</body>
+</html>
